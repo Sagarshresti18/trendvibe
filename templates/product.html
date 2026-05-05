@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section">
+<div class="container">
+<div class="product-detail">
+<div class="product-gallery">
+<img src="{{ url_for('static', filename='assets/' + product.image) }}" alt="{{ product.name }}" class="product-main-image product-img">
+</div>
+<div class="product-details">
+<span class="product-category-badge">{{ product.category|title }}</span>
+<h1 class="product-title">{{ product.name }}</h1>
+<div class="product-rating-row">
+<span class="rating">★ {{ product.rating }}</span>
+<span class="stock-info">{{ product.stock }} in stock</span>
+</div>
+<p class="product-description">{{ product.description }}</p>
+<div class="product-options">
+<div class="option-group">
+<label>Size</label>
+<div class="size-options">
+{% for size in product.sizes %}
+<button class="size-btn">{{ size }}</button>
+{% endfor %}
+</div>
+</div>
+<div class="option-group">
+<label>Color</label>
+<div class="color-options">
+{% for color in product.colors %}
+<button class="color-btn">{{ color }}</button>
+{% endfor %}
+</div>
+</div>
+</div>
+<div class="product-price-section">
+<span class="price-large">{{ currency }}{{ product.price|inr }}</span>
+</div>
+<div class="product-actions-row">
+<div class="quantity-selector">
+<button class="qty-btn" data-action="decrease">−</button>
+<input type="number" id="quantity" value="1" min="1" max="{{ product.stock }}" class="qty-input">
+<button class="qty-btn" data-action="increase">+</button>
+</div>
+<button class="btn btn-primary btn-lg" data-add-to-cart="{{ product.id }}" style="flex:1">Add to Cart</button>
+<button class="wishlist-btn-large {% if in_wishlist %}active{% endif %}" data-wishlist-toggle="{{ product.id }}">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="{% if in_wishlist %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2">
+<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+{% endblock %}

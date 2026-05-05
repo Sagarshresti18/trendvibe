@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="csrf-token" content="{{ csrf_token }}" />
+<title>{{ site_name }} - {{ config.SITE_TAGLINE }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+<header class="header">
+<div class="container">
+<div class="header-content">
+<a href="{{ url_for('index') }}" class="logo">
+<span class="logo-icon">{{ config.SITE_MARK }}</span>
+<div class="logo-text">
+<span class="logo-name">{{ site_name }}</span>
+<span class="logo-tagline">{{ config.SITE_TAGLINE }}</span>
+</div>
+</a>
+<nav class="nav">
+<a href="{{ url_for('index') }}" class="nav-link">Home</a>
+<a href="{{ url_for('products_page') }}" class="nav-link">Shop</a>
+<a href="{{ url_for('cart_view') }}" class="nav-link">
+Cart <span id="cart-count" class="badge">{{ cart_count }}</span>
+</a>
+{% if logged_in %}
+<a href="{{ url_for('profile') }}" class="nav-link">Profile</a>
+<a href="{{ url_for('logout') }}" class="btn btn-outline btn-sm">Logout</a>
+{% else %}
+<a href="{{ url_for('login_form') }}" class="btn btn-outline btn-sm">Login</a>
+<a href="{{ url_for('register_form') }}" class="btn btn-primary btn-sm">Sign Up</a>
+{% endif %}
+<button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+<svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<circle cx="12" cy="12" r="5"></circle>
+<line x1="12" y1="1" x2="12" y2="3"></line>
+<line x1="12" y1="21" x2="12" y2="23"></line>
+<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+<line x1="1" y1="12" x2="3" y2="12"></line>
+<line x1="21" y1="12" x2="23" y2="12"></line>
+<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+</svg>
+<svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+</svg>
+</button>
+</nav>
+</div>
+</div>
+</header>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="flash-container">
+{% for category, message in messages %}
+<div class="flash flash-{{ category }}">{{ message }}</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+<main class="main">
+{% block content %}{% endblock %}
+</main>
+<footer class="footer">
+<div class="container">
+<div class="footer-grid">
+<div class="footer-col">
+<h3 class="footer-title">{{ site_name }}</h3>
+<p class="footer-text">{{ config.SITE_TAGLINE }}</p>
+<p class="footer-copyright">&copy; 2026 {{ site_name }}. All rights reserved.</p>
+</div>
+<div class="footer-col">
+<h4 class="footer-heading">Shop</h4>
+<div class="footer-links">
+<a href="{{ url_for('products_page') }}">All Products</a>
+<a href="{{ url_for('products_page', category='mens') }}">Men's Wear</a>
+<a href="{{ url_for('products_page', category='womens') }}">Women's Wear</a>
+<a href="{{ url_for('products_page', category='accessories') }}">Accessories</a>
+</div>
+</div>
+<div class="footer-col">
+<h4 class="footer-heading">Account</h4>
+<div class="footer-links">
+{% if logged_in %}
+<a href="{{ url_for('profile') }}">My Profile</a>
+<a href="{{ url_for('profile') }}#orders">Orders</a>
+<a href="{{ url_for('profile') }}#wishlist">Wishlist</a>
+{% else %}
+<a href="{{ url_for('login_form') }}">Login</a>
+<a href="{{ url_for('register_form') }}">Register</a>
+{% endif %}
+<a href="{{ url_for('cart_view') }}">Cart</a>
+</div>
+</div>
+<div class="footer-col">
+<h4 class="footer-heading">Support</h4>
+<div class="footer-links">
+<a href="#">Help Center</a>
+<a href="#">Shipping Info</a>
+<a href="#">Returns</a>
+<a href="#">Contact Us</a>
+</div>
+</div>
+</div>
+</div>
+</footer>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

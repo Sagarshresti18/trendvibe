@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+<div class="container">
+<div class="hero-content">
+<h1 class="hero-title">Discover Your Style</h1>
+<p class="hero-subtitle">Premium clothing collection for the modern wardrobe. Quality fabrics, timeless designs.</p>
+<div class="hero-actions">
+<a href="{{ url_for('products_page') }}" class="btn btn-primary btn-lg">Shop Now</a>
+<a href="{{ url_for('products_page', category='mens') }}" class="btn btn-outline btn-lg">Men's Collection</a>
+</div>
+</div>
+</div>
+</section>
+<section class="section">
+<div class="container">
+<div class="section-header">
+<h2 class="section-title">Shop by Category</h2>
+<a href="{{ url_for('products_page') }}" class="btn btn-text">View All</a>
+</div>
+<div class="category-grid">
+{% for category in categories %}
+<a href="{{ url_for('products_page', category=category.slug) }}" class="category-card">
+<div class="category-icon">{{ category.name[:2] }}</div>
+<h3 class="category-name">{{ category.name }}</h3>
+<p class="category-desc">{{ category.description }}</p>
+</a>
+{% endfor %}
+</div>
+</div>
+</section>
+<section class="section section-alt">
+<div class="container">
+<div class="section-header">
+<h2 class="section-title">Featured Products</h2>
+<a href="{{ url_for('products_page') }}" class="btn btn-text">View All</a>
+</div>
+<div class="product-grid">
+{% for product in products %}
+<div class="product-card">
+<div class="product-image">
+<img src="{{ url_for('static', filename='assets/' + product.image) }}" alt="{{ product.name }}" class="product-img">
+<button class="wishlist-btn" data-wishlist-toggle="{{ product.id }}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+</svg>
+</button>
+</div>
+<div class="product-info">
+<h3 class="product-name">{{ product.name }}</h3>
+<div class="product-meta">
+<span class="product-rating">★ {{ product.rating }}</span>
+<span class="product-category">{{ product.category|title }}</span>
+</div>
+<p class="product-desc">{{ product.description }}</p>
+<div class="product-footer">
+<span class="product-price">{{ currency }}{{ product.price|inr }}</span>
+<div class="product-actions">
+<a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-sm btn-outline">View</a>
+<button class="btn btn-sm btn-primary" data-add-to-cart="{{ product.id }}">Add to Cart</button>
+</div>
+</div>
+</div>
+</div>
+{% endfor %}
+</div>
+</div>
+</section>
+<section class="section cta-section">
+<div class="container">
+<div class="cta-card">
+<h2 class="cta-title">Join ThreadVibe Community</h2>
+<p class="cta-text">Get exclusive access to new arrivals, special offers, and style tips.</p>
+<div class="cta-actions">
+{% if not logged_in %}
+<a href="{{ url_for('register_form') }}" class="btn btn-primary btn-lg">Create Account</a>
+<a href="{{ url_for('login_form') }}" class="btn btn-outline btn-lg">Sign In</a>
+{% else %}
+<a href="{{ url_for('products_page') }}" class="btn btn-primary btn-lg">Continue Shopping</a>
+{% endif %}
+</div>
+</div>
+</div>
+</section>
+{% endblock %}

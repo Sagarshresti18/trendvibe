@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section">
+<div class="container">
+<h1 class="page-title">Shopping Cart</h1>
+{% if items %}
+<div class="cart-layout">
+<div class="cart-items">
+{% for item in items %}
+<div class="cart-item">
+<img src="{{ url_for('static', filename='assets/' + item.image) }}" alt="{{ item.name }}" class="cart-item-image product-img">
+<div class="cart-item-details">
+<h3 class="cart-item-name">{{ item.name }}</h3>
+<p class="cart-item-category">{{ item.category|title }}</p>
+<p class="cart-item-price">{{ currency }}{{ item.price|inr }}</p>
+</div>
+<div class="cart-item-quantity">
+<button class="qty-btn" data-cart-update="{{ item.id }}" data-quantity="{{ item.quantity - 1 }}">−</button>
+<span class="qty-display">{{ item.quantity }}</span>
+<button class="qty-btn" data-cart-update="{{ item.id }}" data-quantity="{{ item.quantity + 1 }}">+</button>
+</div>
+<div class="cart-item-total">{{ currency }}{{ (item.price * item.quantity)|inr }}</div>
+<button class="cart-item-remove" data-cart-update="{{ item.id }}" data-quantity="0">×</button>
+</div>
+{% endfor %}
+</div>
+<div class="cart-summary">
+<h3 class="summary-title">Order Summary</h3>
+<div class="summary-row">
+<span>Subtotal</span>
+<span>{{ currency }}{{ totals.subtotal|inr }}</span>
+</div>
+<div class="summary-row">
+<span>Shipping</span>
+<span>{{ currency }}{{ totals.shipping|inr }}</span>
+</div>
+<div class="summary-row">
+<span>Tax</span>
+<span>{{ currency }}{{ totals.tax|inr }}</span>
+</div>
+<div class="summary-divider"></div>
+<div class="summary-row summary-total">
+<span>Total</span>
+<span>{{ currency }}{{ totals.total|inr }}</span>
+</div>
+<a href="{{ url_for('checkout') }}" class="btn btn-primary btn-lg btn-block">Proceed to Checkout</a>
+<a href="{{ url_for('products_page') }}" class="btn btn-outline btn-block">Continue Shopping</a>
+</div>
+</div>
+{% else %}
+<div class="empty-state">
+<h2>Your cart is empty</h2>
+<p>Add some items to get started</p>
+<a href="{{ url_for('products_page') }}" class="btn btn-primary btn-lg">Shop Now</a>
+</div>
+{% endif %}
+</div>
+</section>
+{% endblock %}

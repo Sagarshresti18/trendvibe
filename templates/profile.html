@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section">
+<div class="container">
+
+<div class="profile-header">
+<div class="profile-avatar">{{ (user.email or 'U')[0]|upper }}</div>
+<div class="profile-info">
+<h1 class="profile-name">{{ user.name or 'User' }}</h1>
+<p class="profile-email">{{ user.email }}</p>
+</div>
+<a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+</div>
+
+<div class="profile-tabs">
+<button class="tab-btn active" data-tab="orders">
+Orders{% if orders %}<span class="tab-count">{{ orders|length }}</span>{% endif %}
+</button>
+<button class="tab-btn" data-tab="wishlist">
+Wishlist{% if wishlist %}<span class="tab-count">{{ wishlist|length }}</span>{% endif %}
+</button>
+</div>
+
+{# ── Orders Tab ─────────────────────────────────────────────── #}
+<div class="tab-content active" id="orders">
+<h2 class="section-title">Order History</h2>
+{% if orders %}
+<div class="orders-list">
+{% for order in orders %}
+<div class="order-card">
+
+<div class="order-header">
+<div class="order-header-left">
+<span class="order-id">Order #{{ order.id[:8]|upper }}</span>
+<span class="order-date">{{ (order.created_at or '')[:10] }}</span>
+</div>
+<div class="order-header-right">
+<span class="order-status status-{{ order.status|default('pending') }}">
+{{ (order.status or 'pending')|title }}
+</span>
+<span class="order-method">{{ (order.payment_method or 'card')|upper }}</span>
+</div>
+</div>
+
+<div class="order-items-list">
+{% for item in order.order_items %}
+<div class="order-line-item">
+{% if item.image %}
+<img src="{{ url_for('static', filename='assets/' + item.image) }}"
+alt="{{ item.name }}" class="order-item-thumb product-img">
+{% else %}
+<div class="order-item-thumb order-item-no-img">{{ (item.name or '?')[:2] }}</div>
+{% endif %}
+<div class="order-item-info">
+<p class="order-item-name">{{ item.name or 'Product' }}</p>
+<p class="order-item-meta">
+Qty: {{ item.quantity }} &times; {{ currency }}{{ (item.price or 0)|inr }}
+</p>
+</div>
+<span class="order-item-subtotal">
+{{ currency }}{{ ((item.price or 0) * (item.quantity or 1))|inr }}
+</span>
+</div>
+{% endfor %}
+</div>
+
+<div class="order-footer">
+<div class="order-address">
+<span class="order-address-label">Ship to:</span>
+{{ order.customer.name }}, {{ order.customer.city }}, {{ order.customer.country }}
+</div>
+<div class="order-totals">
+<div class="order-total-row">
+<span>Subtotal</span>
+<span>{{ currency }}{{ order.totals.subtotal|inr }}</span>
+</div>
+<div class="order-total-row">
+<span>Shipping</span>
+<span>{{ currency }}{{ order.totals.shipping|inr }}</span>
+</div>
+<div class="order-total-row">
+<span>Tax (GST 18%)</span>
+<span>{{ currency }}{{ order.totals.tax|inr }}</span>
+</div>
+<div class="order-total-row order-grand-total">
+<span>Total Paid</span>
+<span>{{ currency }}{{ order.totals.total|inr }}</span>
+</div>
+</div>
+</div>
+
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+<div class="empty-icon">📦</div>
+<h3>No orders yet</h3>
+<p>Your completed orders will appear here</p>
+<a href="{{ url_for('products_page') }}" class="btn btn-primary">Start Shopping</a>
+</div>
+{% endif %}
+</div>
+
+{# ── Wishlist Tab ────────────────────────────────────────────── #}
+<div class="tab-content" id="wishlist">
+<h2 class="section-title">My Wishlist</h2>
+{% if wishlist %}
+<div class="product-grid">
+{% for product in wishlist %}
+<div class="product-card">
+<div class="product-image">
+<img src="{{ url_for('static', filename='assets/' + product.image) }}"
+alt="{{ product.name }}" class="product-img">
+<button class="wishlist-btn active" data-wishlist-toggle="{{ product.id }}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"
+stroke="currentColor" stroke-width="2">
+<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+</svg>
+</button>
+</div>
+<div class="product-info">
+<h3 class="product-name">{{ product.name }}</h3>
+<div class="product-footer">
+<span class="product-price">{{ currency }}{{ product.price|inr }}</span>
+<div class="product-actions">
+<a href="{{ url_for('product_detail', product_id=product.id) }}"
+class="btn btn-sm btn-outline">View</a>
+<button class="btn btn-sm btn-primary"
+data-add-to-cart="{{ product.id }}">Add to Cart</button>
+</div>
+</div>
+</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+<div class="empty-icon">♡</div>
+<h3>Your wishlist is empty</h3>
+<p>Save items you love to find them easily later</p>
+<a href="{{ url_for('products_page') }}" class="btn btn-primary">Browse Products</a>
+</div>
+{% endif %}
+</div>
+
+</div>
+</section>
+{% endblock %}

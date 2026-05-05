@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header">
+<div class="container">
+<h1 class="page-title">Our Collection</h1>
+<p class="page-subtitle">Discover premium clothing for every occasion</p>
+</div>
+</section>
+<section class="section">
+<div class="container">
+<div class="products-layout">
+<aside class="sidebar">
+<div class="sidebar-section">
+<h3 class="sidebar-title">Search</h3>
+<form method="get" class="search-form">
+<input type="text" name="search" placeholder="Search products..." value="{{ search_query or '' }}" class="search-input">
+<button type="submit" class="btn btn-primary btn-sm">Search</button>
+</form>
+</div>
+<div class="sidebar-section">
+<h3 class="sidebar-title">Categories</h3>
+<div class="filter-list">
+<a href="{{ url_for('products_page') }}" class="filter-item {% if not active_category %}active{% endif %}">All Products</a>
+{% for category in categories %}
+<a href="{{ url_for('products_page', category=category.slug) }}" class="filter-item {% if active_category == category.slug %}active{% endif %}">{{ category.name }}</a>
+{% endfor %}
+</div>
+</div>
+</aside>
+<div class="products-main">
+<div class="products-toolbar">
+<span class="products-count">{{ products|length }} products</span>
+</div>
+{% if products %}
+<div class="product-grid">
+{% for product in products %}
+<div class="product-card">
+<div class="product-image">
+<img src="{{ url_for('static', filename='assets/' + product.image) }}" alt="{{ product.name }}" class="product-img">
+<button class="wishlist-btn" data-wishlist-toggle="{{ product.id }}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+</svg>
+</button>
+</div>
+<div class="product-info">
+<h3 class="product-name">{{ product.name }}</h3>
+<div class="product-meta">
+<span class="product-rating">★ {{ product.rating }}</span>
+<span class="product-stock">{{ product.stock }} in stock</span>
+</div>
+<p class="product-desc">{{ product.description }}</p>
+<div class="product-footer">
+<span class="product-price">{{ currency }}{{ product.price|inr }}</span>
+<div class="product-actions">
+<a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-sm btn-outline">View</a>
+<button class="btn btn-sm btn-primary" data-add-to-cart="{{ product.id }}">Add to Cart</button>
+</div>
+</div>
+</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+<p>No products found</p>
+<a href="{{ url_for('products_page') }}" class="btn btn-primary">View All Products</a>
+</div>
+{% endif %}
+</div>
+</div>
+</div>
+</section>
+{% endblock %}

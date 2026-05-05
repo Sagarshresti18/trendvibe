@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section">
+<div class="container">
+<div class="auth-container">
+<div class="auth-card">
+<h1 class="auth-title">Create Account</h1>
+<p class="auth-subtitle">Join ThreadVibe today</p>
+<form method="post" class="auth-form">
+<input type="hidden" name="{{ config.CSRF_FIELD }}" value="{{ csrf_token }}" />
+<div class="form-group">
+<label>Full Name</label>
+<input type="text" name="name" required class="form-input" autofocus>
+</div>
+<div class="form-group">
+<label>Email</label>
+<input type="email" name="email" required class="form-input">
+</div>
+<div class="form-group">
+<label>Password</label>
+<input type="password" name="password" required minlength="6" class="form-input">
+</div>
+<button type="submit" class="btn btn-primary btn-lg btn-block">Create Account</button>
+</form>
+<p class="auth-footer">Already have an account? <a href="{{ url_for('login_form') }}" class="link-primary">Sign in</a></p>
+</div>
+</div>
+</div>
+</section>
+{% endblock %}
