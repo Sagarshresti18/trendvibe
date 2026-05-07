@@ -175,6 +175,7 @@ threadvibe/
 ```bash
 python app.py
 ```
+flask --app app run  
 
 ### Using Mock Database
 Set `USE_MOCK_DB=true` in `.env` to use in-memory database for testing.
@@ -193,8 +194,7 @@ This project is created for educational purposes.
 
 ## Support
 
-For issues or questions, please open an issue in the repository.
-
+For issues or questions, please open an issue in the repo.
 ---
 
 **ThreadVibe - Where Style Meets Comfort** 🛍️
