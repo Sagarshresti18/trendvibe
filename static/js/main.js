@@ -182,6 +182,74 @@ targetContent.classList.add('active');
 });
 });
 
+// ── Cancel Order ────────────────────────────────────────────────
+const cancelModal   = document.getElementById('cancel-modal');
+const modalOrderRef = document.getElementById('modal-order-ref');
+const modalConfirm  = document.getElementById('modal-confirm');
+const modalDismiss  = document.getElementById('modal-dismiss');
+let pendingCancelId  = null;
+let pendingCancelBtn = null;
+
+document.body.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-cancel-order]');
+  if (!btn) return;
+  pendingCancelId  = btn.dataset.cancelOrder;
+  pendingCancelBtn = btn;
+  if (modalOrderRef) modalOrderRef.textContent = btn.dataset.orderRef || 'this order';
+  if (cancelModal)   cancelModal.hidden = false;
+});
+
+modalDismiss?.addEventListener('click', () => {
+  cancelModal.hidden = true;
+  pendingCancelId = null;
+  pendingCancelBtn = null;
+});
+
+cancelModal?.addEventListener('click', (e) => {
+  if (e.target === cancelModal) {
+    cancelModal.hidden = true;
+    pendingCancelId = null;
+    pendingCancelBtn = null;
+  }
+});
+
+modalConfirm?.addEventListener('click', async () => {
+  if (!pendingCancelId) return;
+  modalConfirm.disabled = true;
+  modalConfirm.textContent = 'Cancelling…';
+
+  try {
+    const data = await postJson(`/order/cancel/${pendingCancelId}`, {
+      csrf_token: csrfToken,
+    });
+
+    cancelModal.hidden = true;
+
+    if (data.error) {
+      alert(data.error);
+    } else {
+      // Update the status badge in the card without a full reload
+      const card = pendingCancelBtn.closest('.order-card');
+      if (card) {
+        const badge = card.querySelector('.order-status');
+        if (badge) {
+          badge.textContent = 'Cancelled';
+          badge.className = 'order-status status-cancelled';
+        }
+        // Remove the cancel button — can't cancel twice
+        pendingCancelBtn.remove();
+      }
+    }
+  } catch (err) {
+    alert('Something went wrong. Please try again.');
+  } finally {
+    modalConfirm.disabled = false;
+    modalConfirm.textContent = 'Yes, Cancel Order';
+    pendingCancelId  = null;
+    pendingCancelBtn = null;
+  }
+});
+
 // Auto-hide flash messages
 setTimeout(() => {
 document.querySelectorAll('.flash').forEach((flash) => {
