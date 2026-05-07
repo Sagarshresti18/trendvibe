@@ -273,6 +273,43 @@ def get_wishlist(db: Database, user_id: str) -> List[str]:
         raise
 
 
+def cancel_order(db: Database, order_id: str, user_email: str) -> str:
+    """Cancel an order. Returns 'ok', 'not_found', 'forbidden', or 'not_cancellable'."""
+    try:
+        from bson import ObjectId
+        from bson.errors import InvalidId
+        try:
+            oid = ObjectId(order_id)
+        except InvalidId:
+            return "not_found"
+
+        col = get_collection(db, config.ORDERS_COLLECTION)
+        order = col.find_one({"_id": oid})
+        if not order:
+            return "not_found"
+
+        # Verify ownership
+        owner = order.get("user_email") or order.get("customer", {}).get("email", "")
+        if owner != user_email:
+            return "forbidden"
+
+        # Only pending orders can be cancelled
+        if order.get("status", "pending") not in ("pending", "confirmed"):
+            return "not_cancellable"
+
+        col.update_one(
+            {"_id": oid},
+            {"$set": {
+                "status": "cancelled",
+                "cancelled_at": __import__("datetime").datetime.utcnow().isoformat(),
+            }}
+        )
+        return "ok"
+    except PyMongoError as exc:
+        logger.exception("Cancel order failed: %s", exc)
+        raise
+
+
 def create_review(db: Database, review: Dict[str, Any]) -> str:
     """Create a product review."""
     try:

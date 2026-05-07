@@ -389,6 +389,27 @@ def create_app(config_override: Dict[str, Any] | None = None) -> Flask:
                 wishlist_products.append(product)
         return render_template("profile.html", user=user, orders=orders, wishlist=wishlist_products)
 
+    @app.post("/order/cancel/<order_id>")
+    def cancel_order(order_id: str) -> Response:
+        """Cancel an order if it belongs to the logged-in user and is still pending."""
+        user_email = session.get("user_email")
+        if not user_email:
+            return jsonify({"error": "Please log in"}), 401
+
+        payload = request.get_json(silent=True) or {}
+        if not validate_csrf(payload.get(config.CSRF_FIELD)):
+            return jsonify({"error": "Invalid CSRF token"}), 400
+
+        result = models.cancel_order(db, order_id, user_email)
+        if result == "not_found":
+            return jsonify({"error": "Order not found"}), 404
+        if result == "forbidden":
+            return jsonify({"error": "Not your order"}), 403
+        if result == "not_cancellable":
+            return jsonify({"error": "Only pending orders can be cancelled"}), 400
+
+        return jsonify({"success": True})
+
     @app.post("/wishlist/add")
     def wishlist_add() -> Response:
         """Add a product to wishlist."""

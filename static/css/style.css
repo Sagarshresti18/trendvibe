@@ -1442,3 +1442,103 @@ font-size: 16px;
 color: var(--text-light);
 flex-shrink: 0;
 }
+
+/* ── Cancel Order Button ───────────────────────────────────── */
+.btn-cancel {
+background: transparent;
+border: 1px solid var(--error);
+color: var(--error);
+padding: 8px 18px;
+border-radius: 8px;
+font-size: 13px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.2s;
+align-self: flex-end;
+}
+
+.btn-cancel:hover {
+background: var(--error);
+color: white;
+}
+
+/* ── Confirmation Modal ────────────────────────────────────── */
+.modal-overlay {
+position: fixed;
+inset: 0;
+background: rgba(0, 0, 0, 0.5);
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 999;
+padding: 20px;
+backdrop-filter: blur(4px);
+}
+
+.modal-overlay[hidden] {
+display: none;
+}
+
+.modal-box {
+background: var(--bg);
+border: 1px solid var(--border);
+border-radius: 16px;
+padding: 36px 32px;
+max-width: 420px;
+width: 100%;
+text-align: center;
+box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+animation: modalIn 0.2s ease;
+}
+
+@keyframes modalIn {
+from { transform: scale(0.92); opacity: 0; }
+to   { transform: scale(1);    opacity: 1; }
+}
+
+.modal-icon {
+font-size: 40px;
+margin-bottom: 12px;
+}
+
+.modal-title {
+font-family: 'Playfair Display', serif;
+font-size: 22px;
+font-weight: 700;
+margin-bottom: 10px;
+}
+
+.modal-text {
+font-size: 15px;
+color: var(--text-light);
+margin-bottom: 28px;
+line-height: 1.6;
+}
+
+.modal-actions {
+display: flex;
+gap: 12px;
+justify-content: center;
+flex-wrap: wrap;
+}
+
+.btn-cancel-confirm {
+background: var(--error);
+color: white;
+border: none;
+padding: 10px 24px;
+border-radius: 8px;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.btn-cancel-confirm:hover {
+background: #dc2626;
+}
+
+.btn-cancel-confirm:disabled {
+opacity: 0.6;
+cursor: not-allowed;
+}
